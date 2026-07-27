@@ -6,7 +6,12 @@ from app.core.security import (
 from app.models.user import User
 from app.repositories.user_repository import UserRepository
 
+from fastapi import HTTPException
 
+from app.core.security import (
+    verify_password,
+    create_access_token,
+)
 class AuthService:
 
     def __init__(self, repo: UserRepository):
@@ -22,8 +27,11 @@ class AuthService:
         existing = await self.repo.get_by_email(email)
 
         if existing:
-            raise Exception("Email already exists")
-
+         raise HTTPException(
+            status_code=400,
+            detail="Email already exists",
+         )
+ 
         user = User(
             full_name=full_name,
             email=email,
@@ -34,20 +42,26 @@ class AuthService:
 
     async def login(
         self,
-        email,
-        password,
+        email: str,
+        password: str,
     ):
 
-        user = await self.repo.get_by_email(email)
+        user = await self.user_repo.get_by_email(email)
 
         if not user:
-            return None
+            raise HTTPException(
+                status_code=401,
+                detail="Invalid credentials"
+            )
 
         if not verify_password(
             password,
             user.password_hash,
         ):
-            return None
+            raise HTTPException(
+                status_code=401,
+                detail="Invalid credentials"
+            )
 
         token = create_access_token(
             {
@@ -55,4 +69,7 @@ class AuthService:
             }
         )
 
-        return token
+        return {
+            "access_token": token,
+            "token_type": "bearer"
+        }

@@ -1,11 +1,11 @@
 from datetime import datetime, timedelta, UTC
 from jose import jwt
 from passlib.context import CryptContext
+from app.core.config import settings
 
-SECRET_KEY = "CHANGE_THIS_TO_A_LONG_RANDOM_SECRET"
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 60
-
+SECRET_KEY = settings.SECRET_KEY
+ALGORITHM = settings.ALGORITHM
+ACCESS_TOKEN_EXPIRE_MINUTES = settings.ACCESS_TOKEN_EXPIRE_MINUTES
 pwd_context = CryptContext(
     schemes=["bcrypt"],
     deprecated="auto"

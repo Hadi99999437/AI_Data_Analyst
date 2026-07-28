@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.dependencies.auth import get_current_user
@@ -11,7 +11,6 @@ from app.schemas.user import UserCreate, UserResponse
 from app.schemas.auth import LoginRequest, TokenResponse
 
 from app.models.user import User
-
 
 router = APIRouter(
     prefix="/auth",
@@ -29,13 +28,11 @@ async def register(
 ):
     service = AuthService(UserRepository(db))
 
-    created = await service.register(
+    return await service.register(
         user.full_name,
         user.email,
         user.password,
     )
-
-    return created
 
 
 @router.post(
@@ -48,21 +45,10 @@ async def login(
 ):
     service = AuthService(UserRepository(db))
 
-    token = await service.login(
+    return await service.login(
         request.email,
         request.password,
     )
-
-    if token is None:
-        raise HTTPException(
-            status_code=401,
-            detail="Invalid credentials",
-        )
-
-    return {
-        "access_token": token,
-        "token_type": "bearer",
-    }
 
 
 @router.get(

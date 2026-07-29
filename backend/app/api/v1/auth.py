@@ -13,10 +13,8 @@ from app.schemas.auth import LoginRequest, TokenResponse
 from app.models.user import User
 
 router = APIRouter(
-    prefix="/auth",
     tags=["Authentication"],
 )
-
 
 @router.post(
     "/register",

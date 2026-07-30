@@ -34,6 +34,7 @@ class DatasetService:
             user_id=user_id,
             original_name=file.filename,
             stored_name=stored_name,
+            storage_path=path,
             file_type=extension,
             file_size=os.path.getsize(path),
             rows=len(df),

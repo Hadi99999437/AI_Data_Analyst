@@ -34,3 +34,7 @@ class Dataset(Base, BaseModel):
         "AnalysisJob",
         back_populates="dataset",
     )
+    
+    storage_path: Mapped[str] = mapped_column(
+    String(500)
+    )

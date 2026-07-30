@@ -1,5 +1,5 @@
 from logging.config import fileConfig
-
+import app.models
 from alembic import context
 from sqlalchemy import pool
 from sqlalchemy.engine import Connection

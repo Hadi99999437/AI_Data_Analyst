@@ -1,3 +1,6 @@
+from uuid import UUID
+
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.dataset import Dataset
@@ -17,3 +20,16 @@ class DatasetRepository:
         await self.db.refresh(dataset)
 
         return dataset
+
+    async def get_by_id(
+        self,
+        dataset_id: UUID,
+    ):
+
+        result = await self.db.execute(
+            select(Dataset).where(
+                Dataset.id == dataset_id
+            )
+        )
+
+        return result.scalar_one_or_none()

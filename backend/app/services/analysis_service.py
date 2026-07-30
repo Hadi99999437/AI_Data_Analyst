@@ -1,51 +1,47 @@
-from app.repositories.dataset_repository import DatasetRepository
-from app.repositories.analysis_repository import AnalysisRepository
+import pandas as pd
 
 from app.models.analysis_job import AnalysisJob
-
-from app.utils.data_analyzer import (
-    load_dataset,
-    dataset_summary,
-)
+from app.repositories.analysis_repository import AnalysisRepository
+from app.repositories.dataset_repository import DatasetRepository
 
 
 class AnalysisService:
 
     def __init__(
         self,
-        dataset_repo: DatasetRepository,
         analysis_repo: AnalysisRepository,
+        dataset_repo: DatasetRepository,
     ):
-
-        self.dataset_repo = dataset_repo
         self.analysis_repo = analysis_repo
+        self.dataset_repo = dataset_repo
 
     async def analyze_dataset(
         self,
         dataset_id,
-        user_id,
+        analysis_type,
     ):
 
-        dataset = await self.dataset_repo.get_by_id(
-            dataset_id
-        )
+        dataset = await self.dataset_repo.get_by_id(dataset_id)
 
         if dataset is None:
             raise Exception("Dataset not found")
 
-        df = load_dataset(
-            dataset.storage_path
-        )
+        df = pd.read_csv(dataset.storage_path)
 
-        summary = dataset_summary(df)
+        result = {
+            "rows": len(df),
+            "columns": len(df.columns),
+            "column_names": list(df.columns),
+            "missing_values": df.isnull().sum().to_dict(),
+            "data_types": df.dtypes.astype(str).to_dict(),
+            "summary": df.describe(include="all").fillna("").to_dict(),
+        }
 
-        analysis = AnalysisJob(
+        job = AnalysisJob(
             dataset_id=dataset.id,
-            user_id=user_id,
+            analysis_type=analysis_type,
             status="completed",
-            result_json=summary,
+            result_json=result,
         )
 
-        return await self.analysis_repo.create(
-            analysis
-        )
+        return await self.analysis_repo.create(job)

@@ -1,5 +1,5 @@
-from sqlalchemy import ForeignKey, String, JSON
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import String, ForeignKey
+from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
@@ -14,23 +14,26 @@ class AnalysisJob(Base, BaseModel):
         ForeignKey("datasets.id"),
     )
 
-    user_id: Mapped[UUID] = mapped_column(
-        UUID(as_uuid=True),
-        ForeignKey("users.id"),
+    analysis_type: Mapped[str] = mapped_column(
+        String(50)
     )
 
     status: Mapped[str] = mapped_column(
         String(30),
-        default="completed",
+        default="pending",
     )
 
-    result_json: Mapped[dict] = mapped_column(JSON)
+    result: Mapped[dict | None] = mapped_column(
+        JSONB,
+        nullable=True,
+    )
+
+    error_message: Mapped[str | None] = mapped_column(
+        String,
+        nullable=True,
+    )
 
     dataset = relationship(
         "Dataset",
         back_populates="analyses",
-    )
-
-    user = relationship(
-        "User",
     )

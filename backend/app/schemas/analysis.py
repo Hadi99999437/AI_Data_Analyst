@@ -11,7 +11,7 @@ class DatasetSummaryResponse(BaseModel):
 
     data_types: dict
 
-    missing_values: dicts
+    missing_values: dict
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict

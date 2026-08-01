@@ -2,6 +2,7 @@ import pandas as pd
 
 from app.models.analysis_job import AnalysisJob
 from app.services.insight_service import InsightService
+from app.services.ai_service import AIService
 
 
 class AnalysisService:
@@ -48,15 +49,31 @@ class AnalysisService:
                 "summary": df.describe(include="all").fillna("").to_dict(),
             }
 
+            # Rule-based insights
             insight_service = InsightService()
 
             insights = insight_service.generate_insights(result)
 
             result["insights"] = insights["insights"]
             result["recommendations"] = insights["recommendations"]
+
+            # -------------------------------
+            # AI Generated Insights (Gemini)
+            # -------------------------------
+
+            ai_service = AIService()
+
+            ai_result = await ai_service.generate_analysis(result)
+
+            result["ai"] = {
+                "summary": ai_result["summary"],
+                "insights": ai_result["insights"],
+                "recommendations": ai_result["recommendations"],
+            }
+
             job.result = result
             job.status = "completed"
-            job.result = result
+
             await self.analysis_repo.update(job)
 
         except Exception as e:

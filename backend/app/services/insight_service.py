@@ -1,4 +1,3 @@
-from app.services.insight_service import InsightService
 
 class InsightService:
 

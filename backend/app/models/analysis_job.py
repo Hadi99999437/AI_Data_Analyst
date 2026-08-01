@@ -37,3 +37,8 @@ class AnalysisJob(Base, BaseModel):
         "Dataset",
         back_populates="analyses",
     )
+    reports = relationship(
+    "Report",
+    back_populates="analysis",
+    )
+    

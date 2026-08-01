@@ -1,3 +1,5 @@
+from app.services.insight_service import InsightService
+
 class InsightService:
 
     def generate_insights(self, analysis_result: dict):

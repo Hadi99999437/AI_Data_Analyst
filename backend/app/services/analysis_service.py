@@ -1,6 +1,7 @@
 import pandas as pd
 
 from app.models.analysis_job import AnalysisJob
+from app.services.insight_service import InsightService
 
 
 class AnalysisService:
@@ -47,9 +48,15 @@ class AnalysisService:
                 "summary": df.describe(include="all").fillna("").to_dict(),
             }
 
+            insight_service = InsightService()
+
+            insights = insight_service.generate_insights(result)
+
+            result["insights"] = insights["insights"]
+            result["recommendations"] = insights["recommendations"]
             job.result = result
             job.status = "completed"
-
+            job.result = result
             await self.analysis_repo.update(job)
 
         except Exception as e:

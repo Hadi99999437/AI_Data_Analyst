@@ -13,8 +13,9 @@ class DatasetSummaryResponse(BaseModel):
 
     missing_values: dict
 from uuid import UUID
+from typing import Optional, Dict, Any
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel
 
 
 class AnalysisRequest(BaseModel):
@@ -28,6 +29,9 @@ class AnalysisResponse(BaseModel):
     analysis_type: str
     status: str
 
-    model_config = ConfigDict(
-        from_attributes=True
-    )    
+    result: Optional[Dict[str, Any]] = None
+    error_message: Optional[str] = None
+
+    model_config = {
+        "from_attributes": True
+    }

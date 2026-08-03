@@ -11,9 +11,8 @@ class AIService:
         genai.configure(
             api_key=settings.GEMINI_API_KEY
         )
-
         self.model = genai.GenerativeModel(
-            "gemini-2.0-flash"
+            "gemini-2.5-flash"
         )
 
     async def generate_analysis(

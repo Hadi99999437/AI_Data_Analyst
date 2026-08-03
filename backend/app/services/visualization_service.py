@@ -57,3 +57,32 @@ class VisualizationService:
             )
 
         return charts
+        # -----------------------------------
+    # Correlation Heatmap
+    # -----------------------------------
+
+    def create_heatmap(self, df):
+
+        numeric_df = df.select_dtypes(
+            include="number"
+        )
+
+        if numeric_df.shape[1] < 2:
+            return None
+
+        plt.figure(figsize=(10, 8))
+
+        sns.heatmap(
+            numeric_df.corr(),
+            annot=True,
+            cmap="coolwarm",
+            fmt=".2f"
+        )
+
+        plt.title("Correlation Heatmap")
+
+        return self._save_plot()
+
+    # -----------------------------------
+    # Boxplots
+    # -----------------------------------

@@ -4,7 +4,7 @@ import pandas as pd
 from app.models.analysis_job import AnalysisJob
 from app.services.insight_service import InsightService
 from app.services.ai_service import AIService
-
+from app.services.visualization_service import VisualizationService
 
 class AnalysisService:
 

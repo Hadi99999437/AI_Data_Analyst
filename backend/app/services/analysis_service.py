@@ -1,3 +1,4 @@
+import json
 import pandas as pd
 
 from app.models.analysis_job import AnalysisJob
@@ -39,37 +40,97 @@ class AnalysisService:
 
         try:
 
+            # ===========================
+            # Load Dataset
+            # ===========================
+
             df = pd.read_csv(dataset.storage_path)
+
+            # ===========================
+            # Basic Statistics
+            # ===========================
 
             result = {
                 "rows": len(df),
                 "columns": len(df.columns),
                 "column_names": df.columns.tolist(),
+                "data_types": df.dtypes.astype(str).to_dict(),
                 "missing_values": df.isnull().sum().to_dict(),
+                "duplicate_rows": int(df.duplicated().sum()),
                 "summary": df.describe(include="all").fillna("").to_dict(),
             }
 
-            # Rule-based insights
+            # ===========================
+            # Correlation Matrix
+            # ===========================
+
+            numeric_df = df.select_dtypes(include="number")
+
+            if len(numeric_df.columns) > 1:
+
+                correlation = (
+                    numeric_df
+                    .corr()
+                    .round(3)
+                    .fillna(0)
+                    .to_dict()
+                )
+
+                result["correlation"] = correlation
+
+            else:
+
+                result["correlation"] = {}
+
+            # ===========================
+            # Sample Data
+            # ===========================
+
+            result["sample_data"] = (
+                df.head(10)
+                .fillna("")
+                .to_dict(orient="records")
+            )
+
+            # ===========================
+            # Rule-Based Insights
+            # ===========================
+
             insight_service = InsightService()
 
             insights = insight_service.generate_insights(result)
 
-            result["insights"] = insights["insights"]
-            result["recommendations"] = insights["recommendations"]
+            result["rule_based"] = insights
 
-            # -------------------------------
-            # AI Generated Insights (Gemini)
-            # -------------------------------
+            # ===========================
+            # AI Analysis
+            # ===========================
 
             ai_service = AIService()
 
-            ai_result = await ai_service.generate_analysis(result)
-
-            result["ai"] = {
-                "summary": ai_result["summary"],
-                "insights": ai_result["insights"],
-                "recommendations": ai_result["recommendations"],
+            ai_prompt = {
+                "dataset_information": {
+                    "rows": result["rows"],
+                    "columns": result["columns"],
+                    "column_names": result["column_names"],
+                    "data_types": result["data_types"],
+                    "missing_values": result["missing_values"],
+                    "duplicate_rows": result["duplicate_rows"],
+                },
+                "summary_statistics": result["summary"],
+                "correlation": result["correlation"],
+                "sample_data": result["sample_data"],
             }
+
+            ai_result = await ai_service.generate_analysis(
+                ai_prompt
+            )
+
+            result["ai"] = ai_result
+
+            # ===========================
+            # Save Job
+            # ===========================
 
             job.result = result
             job.status = "completed"

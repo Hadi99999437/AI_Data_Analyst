@@ -1,5 +1,6 @@
 import json
-import google.generativeai as genai
+
+from google import genai
 
 from app.core.config import settings
 
@@ -7,12 +8,8 @@ from app.core.config import settings
 class AIService:
 
     def __init__(self):
-
-        genai.configure(
+        self.client = genai.Client(
             api_key=settings.GEMINI_API_KEY
-        )
-        self.model = genai.GenerativeModel(
-            "gemini-2.5-flash"
         )
 
     async def generate_analysis(
@@ -48,8 +45,9 @@ Format:
 }}
 """
 
-        response = self.model.generate_content(
-            prompt
+        response = self.client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=prompt,
         )
 
         text = response.text.strip()

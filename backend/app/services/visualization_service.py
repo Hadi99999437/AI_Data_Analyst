@@ -178,37 +178,68 @@ class VisualizationService:
 
         charts = []
 
-        numeric_columns = list(
-            df.select_dtypes(
-                include="number"
-            ).columns
-        )
+        numeric_df = df.select_dtypes(include="number")
 
-        if len(numeric_columns) < 2:
+        if numeric_df.shape[1] < 2:
             return charts
 
-        for i in range(len(numeric_columns)):
+        # -----------------------------------
+        # Select the most informative columns
+        # (highest variance)
+        # -----------------------------------
 
-            for j in range(i + 1, len(numeric_columns)):
+        variance = (
+            numeric_df.var()
+            .sort_values(ascending=False)
+        )
 
-                x = numeric_columns[i]
-                y = numeric_columns[j]
+        top_columns = variance.head(5).index.tolist()
 
-                plt.figure(figsize=(7, 5))
+        # -----------------------------------
+        # Correlation matrix
+        # -----------------------------------
+
+        corr = numeric_df[top_columns].corr().abs()
+
+        used_pairs = set()
+
+        for col in top_columns:
+
+            correlations = (
+                corr[col]
+                .drop(col)
+                .sort_values(ascending=False)
+            )
+
+            for other in correlations.index:
+
+                pair = tuple(sorted([col, other]))
+
+                if pair in used_pairs:
+                    continue
+
+                if correlations[other] < 0.30:
+                    continue
+
+                used_pairs.add(pair)
+
+                plt.figure(figsize=(8, 6))
 
                 plt.scatter(
-                    df[x],
-                    df[y],
+                    df[col],
+                    df[other],
                     alpha=0.6
                 )
 
-                plt.xlabel(x)
-                plt.ylabel(y)
+                plt.xlabel(col)
+                plt.ylabel(other)
 
-                plt.title(f"{x} vs {y}")
+                plt.title(f"{col} vs {other}")
 
-                charts.append(
-                    self._save_plot()
-                )
+                charts.append(self._save_plot())
+
+                # Maximum 5 scatter plots
+                if len(charts) >= 5:
+                    return charts
 
         return charts

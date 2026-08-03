@@ -15,8 +15,9 @@ class Settings(BaseSettings):
 
     SECRET_KEY: str
 
-    # Add this
-    GEMINI_API_KEY: str
+    # AI Keys
+    GEMINI_API_KEY: str = ""
+    OPENAI_API_KEY: str = ""
 
     ALGORITHM: str = "HS256"
 

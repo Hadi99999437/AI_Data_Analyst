@@ -1,6 +1,6 @@
 import json
 
-from google import genai
+from openai import OpenAI
 
 from app.core.config import settings
 
@@ -8,8 +8,8 @@ from app.core.config import settings
 class AIService:
 
     def __init__(self):
-        self.client = genai.Client(
-            api_key=settings.GEMINI_API_KEY
+        self.client = OpenAI(
+            api_key=settings.OPENAI_API_KEY
         )
 
     async def generate_analysis(
@@ -24,7 +24,7 @@ Below is the statistical summary of a dataset.
 
 {json.dumps(analysis_result, indent=2)}
 
-Generate a professional report.
+Generate a professional report in few sentences.
 
 Return ONLY valid JSON.
 
@@ -45,16 +45,21 @@ Format:
 }}
 """
 
-        response = self.client.models.generate_content(
-            model="gemini-2.5-flash",
-            contents=prompt,
+        response = self.client.chat.completions.create(
+            model="gpt-4.1-mini",
+            messages=[
+                {
+                    "role": "system",
+                    "content": "You are an expert Senior Data Analyst."
+                },
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ],
+            response_format={"type": "json_object"},
         )
 
-        text = response.text.strip()
-
-        if text.startswith("```json"):
-            text = text.replace("```json", "")
-            text = text.replace("```", "")
-            text = text.strip()
-
-        return json.loads(text)
+        return json.loads(
+            response.choices[0].message.content
+        )

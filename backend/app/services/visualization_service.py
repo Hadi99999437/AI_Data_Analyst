@@ -1,6 +1,9 @@
 import os
 import uuid
+
 import matplotlib.pyplot as plt
+import pandas as pd
+import seaborn as sns
 
 
 class VisualizationService:
@@ -9,36 +12,48 @@ class VisualizationService:
         self.output_dir = "uploads/charts"
         os.makedirs(self.output_dir, exist_ok=True)
 
+    def _save_plot(self):
+
+        filename = f"{uuid.uuid4()}.png"
+
+        path = os.path.join(
+            self.output_dir,
+            filename
+        )
+
+        plt.tight_layout()
+        plt.savefig(path)
+        plt.close()
+
+        return path
+
+    # -----------------------------------
+    # Histograms
+    # -----------------------------------
+
     def create_histogram(self, df):
-
-        numeric_columns = df.select_dtypes(include="number").columns
-
-        if len(numeric_columns) == 0:
-            return []
 
         charts = []
 
+        numeric_columns = df.select_dtypes(
+            include="number"
+        ).columns
+
         for column in numeric_columns:
 
-            plt.figure(figsize=(8,5))
+            plt.figure(figsize=(8, 5))
 
-            df[column].hist(
+            df[column].dropna().hist(
                 bins=20,
                 edgecolor="black"
             )
 
-            plt.title(column)
+            plt.title(f"Histogram - {column}")
+            plt.xlabel(column)
+            plt.ylabel("Frequency")
 
-            filename = f"{uuid.uuid4()}.png"
-
-            path = os.path.join(
-                self.output_dir,
-                filename
+            charts.append(
+                self._save_plot()
             )
-
-            plt.savefig(path)
-            plt.close()
-
-            charts.append(path)
 
         return charts

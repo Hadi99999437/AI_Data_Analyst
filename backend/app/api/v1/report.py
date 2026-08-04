@@ -1,6 +1,4 @@
-from fastapi import APIRouter
-from fastapi import Depends
-from fastapi import HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 
 from app.dependencies.db import get_analysis_repository
 
@@ -21,4 +19,4 @@ async def get_report(
             detail="Report not found",
         )
 
-    return job.result["report"]
+    return job.result

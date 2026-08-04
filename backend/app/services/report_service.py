@@ -25,14 +25,22 @@ class ReportService:
                 analysis_result["summary"],
 
             "correlation":
-                analysis_result["correlation"],
+                analysis_result.get("correlation", {}),
 
-            "charts":
-                analysis_result["charts"],
+            "visualizations":
+                analysis_result.get("visualizations", {}),
 
             "rule_based":
-                analysis_result["rule_based"],
+                analysis_result.get("rule_based", {}),
 
             "ai":
-                analysis_result["ai"],
+                analysis_result.get("ai", {}),
+
+            "advanced_analysis": {
+                "outliers": analysis_result.get("outliers", {}),
+                "skewness": analysis_result.get("skewness", {}),
+                "constant_columns": analysis_result.get("constant_columns", []),
+                "high_correlations": analysis_result.get("high_correlations", []),
+                "numeric_statistics": analysis_result.get("numeric_statistics", {})
+            }
         }

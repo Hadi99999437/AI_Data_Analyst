@@ -40,6 +40,17 @@ class AnalysisService:
             result[col] = int(count)
 
         return result
+        def detect_skewness(self, df):
+
+            numeric = df.select_dtypes(include="number")
+
+            result = {}
+
+            for col in numeric.columns:
+
+                result[col] = round(float(numeric[col].skew()), 3)
+
+            return result        
     async def run_analysis(
         self,
         dataset_id,

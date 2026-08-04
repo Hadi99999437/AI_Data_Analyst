@@ -4,7 +4,7 @@ from app.models.analysis_job import AnalysisJob
 from app.services.insight_service import InsightService
 from app.services.ai_service import AIService
 from app.services.visualization_service import VisualizationService
-
+from app.services.report_service import ReportService
 
 class AnalysisService:
 
@@ -273,7 +273,9 @@ class AnalysisService:
             )
 
             result["visualizations"] = charts
+            report_service = ReportService()
 
+            result["report"] = report_service.generate_report(result)
             # ===========================
             # Save Job
             # ===========================

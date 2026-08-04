@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-
+from app.api.v1 import report
 from app.api.v1 import (
     health,
     auth,
@@ -39,3 +39,10 @@ api_router.include_router(
     prefix="/reports",
     tags=["Reports"]
 )
+
+api_router.include_router(
+    report.router,
+    prefix="/report",
+    tags=["Report"],
+)
+

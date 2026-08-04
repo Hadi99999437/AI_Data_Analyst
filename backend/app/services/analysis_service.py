@@ -185,7 +185,19 @@ class AnalysisService:
                 .fillna("")
                 .to_dict(orient="records")
             )
+            # ===========================
+            # Advanced Pattern Detection
+            # ===========================
 
+            result["outliers"] = self.detect_outliers(df)
+
+            result["skewness"] = self.detect_skewness(df)
+
+            result["constant_columns"] = self.detect_constant_columns(df)
+
+            result["high_correlations"] = self.detect_high_correlation(df)
+
+            result["numeric_statistics"] = self.numeric_statistics(df)
             # ===========================
             # Rule-Based Insights
             # ===========================

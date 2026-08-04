@@ -40,28 +40,76 @@ class AnalysisService:
             result[col] = int(count)
 
         return result
-        def detect_skewness(self, df):
+    def detect_skewness(self, df):
 
-            numeric = df.select_dtypes(include="number")
+        numeric = df.select_dtypes(include="number")
 
-            result = {}
+        result = {}
 
-            for col in numeric.columns:
+        for col in numeric.columns:
 
-                result[col] = round(float(numeric[col].skew()), 3)
+            result[col] = round(float(numeric[col].skew()), 3)
 
-            return result  
+        return result  
 
-        def detect_constant_columns(self, df):
+    def detect_constant_columns(self, df):
 
-            constant = []
+        constant = []
 
-            for col in df.columns:
+        for col in df.columns:
 
-                if df[col].nunique(dropna=False) == 1:
-                    constant.append(col)
+            if df[col].nunique(dropna=False) == 1:
+                constant.append(col)
 
-            return constant      
+        return constant 
+
+    def detect_high_correlation(self, df):
+
+        numeric = df.select_dtypes(include="number")
+
+        if len(numeric.columns) < 2:
+            return []
+
+        corr = numeric.corr().abs()
+
+        pairs = []
+
+        columns = corr.columns
+
+        for i in range(len(columns)):
+
+            for j in range(i + 1, len(columns)):
+
+                value = corr.iloc[i, j]
+
+                if value > 0.8:
+
+                    pairs.append({
+                        "column_1": columns[i],
+                        "column_2": columns[j],
+                        "correlation": round(float(value), 3)
+                    })
+
+        return pairs
+
+    def numeric_statistics(self, df):
+
+        numeric = df.select_dtypes(include="number")
+
+        result = {}
+
+        for col in numeric.columns:
+
+            result[col] = {
+                "mean": round(float(numeric[col].mean()), 3),
+                "median": round(float(numeric[col].median()), 3),
+                "std": round(float(numeric[col].std()), 3),
+                "min": round(float(numeric[col].min()), 3),
+                "max": round(float(numeric[col].max()), 3)
+            }
+
+        return result
+
     async def run_analysis(
         self,
         dataset_id,

@@ -15,7 +15,31 @@ class AnalysisService:
     ):
         self.dataset_repo = dataset_repo
         self.analysis_repo = analysis_repo
+    
+    def detect_outliers(self, df):
 
+        numeric = df.select_dtypes(include="number")
+
+        result = {}
+
+        for col in numeric.columns:
+
+            q1 = numeric[col].quantile(0.25)
+            q3 = numeric[col].quantile(0.75)
+
+            iqr = q3 - q1
+
+            lower = q1 - 1.5 * iqr
+            upper = q3 + 1.5 * iqr
+
+            count = numeric[
+                (numeric[col] < lower) |
+                (numeric[col] > upper)
+            ][col].count()
+
+            result[col] = int(count)
+
+        return result
     async def run_analysis(
         self,
         dataset_id,

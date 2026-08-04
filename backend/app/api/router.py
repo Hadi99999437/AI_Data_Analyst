@@ -5,7 +5,7 @@ from app.api.v1 import (
     auth,
     datasets,
     analysis,
-    reports
+    report
 )
 
 api_router = APIRouter()
@@ -34,11 +34,6 @@ api_router.include_router(
     tags=["Analysis"]
 )
 
-api_router.include_router(
-    reports.router,
-    prefix="/reports",
-    tags=["Reports"]
-)
 
 api_router.include_router(
     report.router,

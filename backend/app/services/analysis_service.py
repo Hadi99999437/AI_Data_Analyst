@@ -50,7 +50,18 @@ class AnalysisService:
 
                 result[col] = round(float(numeric[col].skew()), 3)
 
-            return result        
+            return result  
+
+        def detect_constant_columns(self, df):
+
+            constant = []
+
+            for col in df.columns:
+
+                if df[col].nunique(dropna=False) == 1:
+                    constant.append(col)
+
+            return constant      
     async def run_analysis(
         self,
         dataset_id,

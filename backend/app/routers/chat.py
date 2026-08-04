@@ -1,12 +1,11 @@
-from fastapi import APIRouter
-from fastapi import Depends
+from fastapi import APIRouter, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.schemas.chat import ChatRequest
-from app.schemas.chat import ChatResponse
+from app.schemas.chat import ChatRequest, ChatResponse
+from app.dependencies.auth import get_current_user
+from app.dependencies.db import get_db
 
-from app.api.dependencies import get_current_user
-from app.database.dependencies import get_dataset_repository
-
+from app.repositories.dataset_repository import DatasetRepository
 from app.services.chat_service import ChatService
 
 router = APIRouter()
@@ -18,17 +17,17 @@ router = APIRouter()
 )
 async def chat(
     request: ChatRequest,
+    db: AsyncSession = Depends(get_db),
     current_user=Depends(get_current_user),
-    dataset_repo=Depends(get_dataset_repository),
 ):
 
-    service = ChatService(
-        dataset_repo
-    )
+    dataset_repo = DatasetRepository(db)
+
+    service = ChatService(dataset_repo)
 
     answer = await service.ask_question(
-        request.dataset_id,
-        request.question,
+        dataset_id=request.dataset_id,
+        question=request.question,
     )
 
     return ChatResponse(

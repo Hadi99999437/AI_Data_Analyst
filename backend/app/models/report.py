@@ -22,3 +22,4 @@ class Report(Base, BaseModel):
         "AnalysisJob",
         back_populates="reports",
     )
+    

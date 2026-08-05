@@ -25,11 +25,7 @@ export default function UploadDataset() {
 
         try {
 
-            await uploadDataset(
-                file,
-                name
-            );
-
+            await uploadDataset(file);
             alert("Dataset uploaded successfully");
 
             setFile(null);

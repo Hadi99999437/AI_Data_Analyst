@@ -11,7 +11,25 @@ export const uploadDataset = async (file: File) => {
         formData,
         {
             headers: {
-                "Content-Type": "multipart/form-data",
+                Authorization:
+                    `Bearer ${localStorage.getItem("token")}`,
+                "Content-Type":
+                    "multipart/form-data",
+            },
+        }
+    );
+
+    return response.data;
+};
+
+export const getDatasets = async () => {
+
+    const response = await api.get(
+        "/datasets",
+        {
+            headers: {
+                Authorization:
+                    `Bearer ${localStorage.getItem("token")}`,
             },
         }
     );

@@ -23,11 +23,8 @@ api_router.include_router(
 )
 
 api_router.include_router(
-    datasets.router,
-    prefix="/datasets",
-    tags=["Datasets"]
+    datasets.router
 )
-
 api_router.include_router(
     analysis.router,
     prefix="/analysis",

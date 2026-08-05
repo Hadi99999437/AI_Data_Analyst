@@ -8,8 +8,6 @@ export default function UploadDataset() {
     const [file, setFile] =
         useState<File | null>(null);
 
-    const [name, setName] =
-        useState("");
 
     const [loading, setLoading] =
         useState(false);
@@ -29,7 +27,7 @@ export default function UploadDataset() {
             alert("Dataset uploaded successfully");
 
             setFile(null);
-            setName("");
+            
 
         } catch {
 
@@ -54,10 +52,7 @@ export default function UploadDataset() {
             <input
                 className="border p-3 w-full rounded"
                 placeholder="Dataset Name"
-                value={name}
-                onChange={(e)=>
-                    setName(e.target.value)
-                }
+                
             />
 
             <input

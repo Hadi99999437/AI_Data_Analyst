@@ -1,36 +1,42 @@
 import api from "./api";
 
-export const uploadDataset = async (
-    file: File
-) => {
-
+export async function uploadDataset(
+    file: File,
+    name: string
+) {
     const formData = new FormData();
 
     formData.append("file", file);
+    formData.append("name", name);
 
     const response = await api.post(
         "/datasets/upload",
         formData,
         {
             headers: {
-                "Content-Type": "multipart/form-data",
+                "Content-Type":
+                    "multipart/form-data",
             },
         }
     );
 
     return response.data;
-};
+}
 
-export const getDatasets = async () => {
+export async function getDatasets() {
 
-    const response = await api.get("/datasets");
+    const response = await api.get(
+        "/datasets"
+    );
 
     return response.data;
-};
+}
 
-export const deleteDataset = async (
-    id: string
-) => {
+export async function deleteDataset(
+    datasetId: string
+) {
 
-    await api.delete(`/datasets/${id}`);
-};
+    await api.delete(
+        `/datasets/${datasetId}`
+    );
+}

@@ -37,3 +37,19 @@ async def upload_dataset(
     )
 
     return dataset
+
+    
+@router.get(
+    "",
+    response_model=list[DatasetResponse],
+)
+async def get_datasets(
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    repo = DatasetRepository(db)
+    service = DatasetService(repo)
+
+    return await service.get_user_datasets(
+        current_user.id
+    )    

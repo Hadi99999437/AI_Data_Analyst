@@ -43,3 +43,6 @@ class DatasetService:
         )
 
         return await self.repo.create(dataset)
+    
+    async def get_user_datasets(self, user_id):
+        return await self.repo.get_all_by_user(user_id)    

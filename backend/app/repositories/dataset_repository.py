@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.dataset import Dataset
 
 
+
 class DatasetRepository:
 
     def __init__(self, db: AsyncSession):
@@ -33,3 +34,19 @@ class DatasetRepository:
         )
 
         return result.scalar_one_or_none()
+
+
+
+    async def get_all_by_user(self, user_id: UUID):
+        result = await self.db.execute(
+            select(Dataset)
+            .where(Dataset.user_id == user_id)
+            .order_by(Dataset.created_at.desc())
+        )
+
+        return result.scalars().all()
+
+
+    async def delete(self, dataset: Dataset):
+        await self.db.delete(dataset)
+        await self.db.commit()    

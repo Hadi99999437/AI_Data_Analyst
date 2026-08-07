@@ -46,3 +46,18 @@ class DatasetRepository:
         )
 
         return result.scalars().all()
+    async def get_all_by_user(self, user_id):
+
+        result = await self.db.execute(
+            select(Dataset)
+            .where(Dataset.user_id == user_id)
+            .order_by(Dataset.created_at.desc())
+        )
+
+        return result.scalars().all()
+
+
+    async def delete(self, dataset):
+
+        await self.db.delete(dataset)
+        await self.db.commit()    

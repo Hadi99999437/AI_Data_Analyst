@@ -36,3 +36,7 @@ export const getDatasets = async () => {
 
     return response.data;
 };
+export const getDataset = async (id: string) => {
+    const response = await api.get(`/datasets/${id}`);
+    return response.data;
+};

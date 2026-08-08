@@ -1,8 +1,8 @@
 from uuid import uuid4
 
-from sqlalchemy import String, Integer
+from sqlalchemy import String, Integer, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
 
@@ -18,6 +18,7 @@ class Dataset(Base):
 
     user_id: Mapped[UUID] = mapped_column(
         UUID(as_uuid=True),
+        ForeignKey("users.id"),
         nullable=False,
     )
 
@@ -59,4 +60,9 @@ class Dataset(Base):
     storage_path: Mapped[str | None] = mapped_column(
         String(500),
         nullable=True,
+    )
+
+    user = relationship(
+        "User",
+        back_populates="datasets",
     )

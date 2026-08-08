@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, File, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
-
+from uuid import UUID
 from app.dependencies.db import get_db
 from app.dependencies.auth import get_current_user
 
@@ -52,4 +52,27 @@ async def get_datasets(
 
     return await service.get_user_datasets(
         current_user.id
-    )    
+    ) 
+@router.get(
+    "/{dataset_id}",
+    response_model=DatasetResponse,
+)
+async def get_dataset(
+    dataset_id: UUID,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    repo = DatasetRepository(db)
+
+    dataset = await repo.get_by_id_for_user(
+        dataset_id=dataset_id,
+        user_id=current_user.id,
+    )
+
+    if dataset is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Dataset not found",
+        )
+
+    return dataset       

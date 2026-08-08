@@ -1,40 +1,62 @@
-from sqlalchemy import ForeignKey, Integer, String
+from uuid import uuid4
+
+from sqlalchemy import String, Integer
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.base import Base
-from app.models.base_model import BaseModel
 
 
-class Dataset(Base, BaseModel):
+class Dataset(Base):
     __tablename__ = "datasets"
+
+    id: Mapped[UUID] = mapped_column(
+        UUID(as_uuid=True),
+        primary_key=True,
+        default=uuid4,
+    )
 
     user_id: Mapped[UUID] = mapped_column(
         UUID(as_uuid=True),
-        ForeignKey("users.id"),
+        nullable=False,
     )
 
-    original_name: Mapped[str] = mapped_column(String(255))
-    stored_name: Mapped[str] = mapped_column(String(255))
+    name: Mapped[str | None] = mapped_column(
+        String(255),
+        nullable=True,
+    )
 
-    file_type: Mapped[str] = mapped_column(String(30))
-    file_size: Mapped[int] = mapped_column(Integer)
+    file_name: Mapped[str] = mapped_column(
+        String(255),
+        nullable=False,
+    )
 
-    rows: Mapped[int] = mapped_column(Integer, default=0)
-    columns: Mapped[int] = mapped_column(Integer, default=0)
+    file_type: Mapped[str | None] = mapped_column(
+        String(50),
+        nullable=True,
+    )
+
+    file_size: Mapped[int | None] = mapped_column(
+        Integer,
+        nullable=True,
+    )
+
+    rows: Mapped[int | None] = mapped_column(
+        Integer,
+        nullable=True,
+    )
+
+    columns: Mapped[int | None] = mapped_column(
+        Integer,
+        nullable=True,
+    )
 
     upload_status: Mapped[str] = mapped_column(
-        String(30),
+        String(50),
         default="uploaded",
     )
 
-    user = relationship("User", back_populates="datasets")
-
-    analyses = relationship(
-        "AnalysisJob",
-        back_populates="dataset",
-    )
-    
-    storage_path: Mapped[str] = mapped_column(
-    String(500)
+    storage_path: Mapped[str | None] = mapped_column(
+        String(500),
+        nullable=True,
     )

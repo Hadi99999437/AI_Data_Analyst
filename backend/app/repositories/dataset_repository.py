@@ -60,4 +60,18 @@ class DatasetRepository:
     async def delete(self, dataset):
 
         await self.db.delete(dataset)
-        await self.db.commit()    
+        await self.db.commit()
+
+    async def get_by_id_for_user(
+    self,
+    dataset_id,
+    user_id,
+    ):
+        result = await self.db.execute(
+            select(Dataset).where(
+                Dataset.id == dataset_id,
+                Dataset.user_id == user_id,
+            )
+        )
+
+        return result.scalar_one_or_none()    

@@ -1,21 +1,21 @@
-import DashboardLayout from "@/components/layout/DashboardLayout";
+"use client";
 
-export default function DatasetsPage() {
+import { useParams } from "next/navigation";
+
+export default function DatasetDetailsPage() {
+    const params = useParams();
+
+    const id = params.id as string;
 
     return (
-
-        <DashboardLayout>
-
-            <h1 className="text-3xl font-bold mb-6">
-
-                Datasets
-
+        <div className="p-8">
+            <h1 className="text-3xl font-bold">
+                Dataset Details
             </h1>
 
-            Dataset List will appear here.
-
-        </DashboardLayout>
-
+            <p className="mt-4">
+                Dataset ID: {id}
+            </p>
+        </div>
     );
-
 }

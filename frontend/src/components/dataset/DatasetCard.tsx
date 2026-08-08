@@ -2,47 +2,62 @@
 
 import { useRouter } from "next/navigation";
 
-interface DatasetCardProps {
-    dataset: {
-        id: string;
-        name?: string;
-        file_name?: string;
-        file_type?: string;
-        rows?: number;
-        columns?: number;
-    };
-}
+export default function DatasetCard({ dataset }: any) {
 
-export default function DatasetCard({ dataset }: DatasetCardProps) {
     const router = useRouter();
 
-    const datasetName =
-        dataset.name || dataset.file_name || "Unnamed Dataset";
-
     return (
-        <div className="rounded-xl border bg-white p-6 shadow-sm">
-            <div className="flex items-start justify-between">
+        <div className="dataset-card">
+
+            <div className="flex justify-between items-start">
+
                 <div>
-                    <h2 className="text-xl font-semibold">
-                        {datasetName}
+                    <h2 className="text-xl font-semibold text-white">
+                        {dataset.name || dataset.file_name || "Unnamed Dataset"}
                     </h2>
 
-                    <p className="mt-2 text-sm text-gray-500">
-                        Dataset
+                    <p className="text-gray-400 mt-1">
+                        {dataset.file_type || "Dataset"}
                     </p>
                 </div>
 
-                <span className="rounded-lg bg-gray-100 px-3 py-2 text-sm">
-                    {dataset.file_type || "CSV"}
+                <span className="dataset-badge">
+                    {(dataset.file_type || "CSV").toUpperCase()}
                 </span>
+
             </div>
 
-            <div className="mt-6 flex gap-3">
+            <div className="grid grid-cols-2 gap-3 mt-6">
+
+                <div>
+                    <p className="text-gray-500 text-sm">
+                        Rows
+                    </p>
+
+                    <p className="text-white font-medium">
+                        {dataset.rows ?? "—"}
+                    </p>
+                </div>
+
+                <div>
+                    <p className="text-gray-500 text-sm">
+                        Columns
+                    </p>
+
+                    <p className="text-white font-medium">
+                        {dataset.columns ?? "—"}
+                    </p>
+                </div>
+
+            </div>
+
+            <div className="flex gap-3 mt-6">
+
                 <button
                     onClick={() =>
                         router.push(`/datasets/${dataset.id}`)
                     }
-                    className="rounded-lg border px-4 py-2 hover:bg-gray-100"
+                    className="dataset-view-button"
                 >
                     View
                 </button>
@@ -51,11 +66,13 @@ export default function DatasetCard({ dataset }: DatasetCardProps) {
                     onClick={() =>
                         router.push(`/analysis?datasetId=${dataset.id}`)
                     }
-                    className="rounded-lg bg-black px-4 py-2 text-white hover:bg-gray-800"
+                    className="dataset-analyze-button"
                 >
                     Analyze
                 </button>
+
             </div>
+
         </div>
     );
 }

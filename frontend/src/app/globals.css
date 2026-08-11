@@ -124,10 +124,3 @@ body {
 
     transition: all 0.2s ease;
 }
-
-.dataset-analyze-button:hover {
-    transform: translateY(-1px);
-
-    box-shadow:
-        0 8px 25px rgba(99, 102, 241, 0.3);
-}

@@ -66,3 +66,9 @@ class Dataset(Base):
         "User",
         back_populates="datasets",
     )
+
+    analyses = relationship(
+        "AnalysisJob",
+        back_populates="dataset",
+        cascade="all, delete-orphan",
+    )

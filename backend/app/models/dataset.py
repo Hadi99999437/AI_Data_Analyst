@@ -1,8 +1,9 @@
 from uuid import uuid4
 
-from sqlalchemy import String, Integer, ForeignKey
+from sqlalchemy import String, Integer, DateTime, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.sql import func
 
 from app.db.base import Base
 
@@ -62,6 +63,19 @@ class Dataset(Base):
         nullable=True,
     )
 
+    created_at: Mapped[DateTime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        nullable=False,
+    )
+
+    updated_at: Mapped[DateTime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now(),
+        nullable=False,
+    )
+
     user = relationship(
         "User",
         back_populates="datasets",
@@ -70,5 +84,4 @@ class Dataset(Base):
     analyses = relationship(
         "AnalysisJob",
         back_populates="dataset",
-        cascade="all, delete-orphan",
     )

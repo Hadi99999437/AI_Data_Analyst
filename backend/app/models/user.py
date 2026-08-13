@@ -16,3 +16,7 @@ class User(Base, BaseModel):
 
     datasets = relationship("Dataset", back_populates="user")
     chats = relationship("ChatHistory", back_populates="user")
+    datasets = relationship(
+    "Dataset",
+    back_populates="user",
+)

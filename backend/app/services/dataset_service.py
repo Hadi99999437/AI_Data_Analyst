@@ -30,18 +30,17 @@ class DatasetService:
         else:
             raise Exception("Unsupported file type")
 
-        dataset = Dataset(
-            user_id=user_id,
-            original_name=file.filename,
-            stored_name=stored_name,
-            storage_path=path,
-            file_type=extension,
-            file_size=os.path.getsize(path),
-            rows=len(df),
-            columns=len(df.columns),
-            upload_status="completed",
+            dataset = Dataset(
+        user_id=user_id,
+        original_name=file.filename,
+        stored_name=stored_filename,
+        file_type=file_type,
+        file_size=file_size,
+        rows=rows,
+        columns=columns,
+        upload_status="completed",
+        storage_path=storage_path,
         )
-
         return await self.repo.create(dataset)
     
     async def get_user_datasets(self, user_id):
